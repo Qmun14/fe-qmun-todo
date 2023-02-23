@@ -6,7 +6,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 
 import './card.css'
 
-const Card = () => {
+const Card = ({ todos }) => {
     const [editList, setEditList] = useState({
         status: false,
         id: "",
@@ -15,43 +15,49 @@ const Card = () => {
 
     return (
         <>
-            <div className="list">
-                <div className="list-cards">
-                    {editList.status ? (
-                        <TextField
-                            name="name"
-                            value={editList.name}
-                            className="list-title-textarea"
-                            deleteList={() => null}
-                            handleCancel={() =>
-                                setEditList({
-                                    ...editList,
-                                    status: false,
-                                })
-                            }
-                        />
-                    ) : (
-                        <Title
-                            onClick={() =>
-                                setEditList({
-                                    ...editList,
-                                    status: true,
-                                })
-                            }
-                        >
-                            Doing
-                        </Title>
-                    )}
-                    <div className="card">
-                        Maen Game
-                    </div>
+            {todos.map((todo) => (
 
-                    <div className="toggle-add-card">
-                        <PlusIcon className='w-5 h-5' />
-                        Add a Card
+                <div className="list" key={todo.id}>
+                    <div className="list-cards">
+                        {editList.status ? (
+                            <TextField
+                                name="name"
+                                value={editList.name}
+                                className="list-title-textarea"
+                                deleteList={() => null}
+                                handleCancel={() =>
+                                    setEditList({
+                                        ...editList,
+                                        status: false,
+                                    })
+                                }
+                            />
+                        ) : (
+                            <Title
+                                onClick={() =>
+                                    setEditList({
+                                        ...editList,
+                                        status: true,
+                                    })
+                                }
+                            >
+                                {todo.name}
+                            </Title>
+                        )}
+                        {todo.Items.map((item) => (
+
+                            <div className="card" key={item.id}>
+                                {item.name}
+                            </div>
+                        ))}
+
+                        <div className="toggle-add-card">
+                            <PlusIcon className='w-5 h-5' />
+                            Add a Card
+                        </div>
                     </div>
                 </div>
-            </div>
+            ))}
         </>
     );
 };
