@@ -3,7 +3,7 @@ import TextField from '../TextField';
 import Title from '../Title';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import './card.css'
-import { getOneTodo, updateTodo } from '../../api/todos';
+import { deleteTodo, getOneTodo, updateTodo } from '../../api/todos';
 
 const Card = ({ todos, getTodosAPI }) => {
     const [editList, setEditList] = useState({
@@ -62,6 +62,19 @@ const Card = ({ todos, getTodosAPI }) => {
 
     }
 
+    const deleteTodoAPI = async (id) => {
+        try {
+            if (window.confirm('Yakin Ingin Menghapus ?')) {
+                const response = await deleteTodo(id);
+                if (response.data.message === 'deleting succeeded') {
+                    getTodosAPI();
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <>
             {card.map((todo) => (
@@ -74,7 +87,7 @@ const Card = ({ todos, getTodosAPI }) => {
                                 value={editList.name}
                                 className="list-title-textarea"
                                 onChange={onChange}
-                                deleteList={() => null}
+                                deleteList={() => deleteTodoAPI(editList.id)}
                                 handleCancel={() =>
                                     setEditList({
                                         ...editList,

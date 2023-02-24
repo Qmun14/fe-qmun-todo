@@ -15,3 +15,6 @@ export const createTodo = (data) => {
 export const updateTodo = (id, data) => {
     return Axios.put(`${config.api_url}/api/v1/todos/${id}`, data);
 }
+export const deleteTodo = (id) => {
+    return Axios.delete(`${config.api_url}/api/v1/todos/${id}`);
+}
