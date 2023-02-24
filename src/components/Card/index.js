@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import TextField from '../TextField';
 import Title from '../Title';
-
 import { PlusIcon } from '@heroicons/react/24/outline';
-
 import './card.css'
+import { getOneTodo } from '../../api/todos';
 
 const Card = ({ todos }) => {
     const [editList, setEditList] = useState({
@@ -13,13 +12,29 @@ const Card = ({ todos }) => {
         name: "",
     });
 
+    const toogleEditList = async (id, status) => {
+        try {
+            const response = await getOneTodo(id);
+            if (response.data.message === 'success') {
+                setEditList({
+                    ...editList,
+                    status: status,
+                    id: response.data.data.id,
+                    name: response.data.data.name,
+                });
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <>
             {todos.map((todo) => (
 
                 <div className="list" key={todo.id}>
                     <div className="list-cards">
-                        {editList.status ? (
+                        {editList.status && editList.id === todo.id ? (
                             <TextField
                                 name="name"
                                 value={editList.name}
@@ -29,16 +44,15 @@ const Card = ({ todos }) => {
                                     setEditList({
                                         ...editList,
                                         status: false,
+                                        id: '',
+                                        name: ''
                                     })
                                 }
                             />
                         ) : (
                             <Title
                                 onClick={() =>
-                                    setEditList({
-                                        ...editList,
-                                        status: true,
-                                    })
+                                    toogleEditList(todo.id, true)
                                 }
                             >
                                 {todo.name}

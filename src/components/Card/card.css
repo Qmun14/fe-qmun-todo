@@ -2,9 +2,8 @@
     background: #dfe3e6;
     flex-shrink: 0;
     width: 272px;
-    height: fit-content;
+    height:fit-content;
     margin: 10px;
-    margin-right: 0;
     border-radius: 5px;
     border: 1px solid rgba(0, 0, 0, 0.12);
   }

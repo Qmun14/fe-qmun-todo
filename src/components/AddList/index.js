@@ -7,12 +7,18 @@ import './add-list.css'
 const AddList = ({ handleCancel, getTodosAPI }) => {
     const [name, setName] = useState('');
 
+    const handleClear = () => {
+        setName('');
+        handleCancel();
+    }
+
     const saveTodos = async () => {
         try {
             const payload = { name: name };
             const response = await createTodo(payload);
             if (response.data.message === 'success') {
                 getTodosAPI();
+                handleClear();
             }
         } catch (err) {
 
