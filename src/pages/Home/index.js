@@ -31,7 +31,7 @@ const HomePage = () => {
                 MERN Todo Apps
             </Header>
             <Board>
-                <Card todos={todos} />
+                <Card todos={todos} getTodosAPI={() => getTodosAPI()} />
                 <div className='add-list w-[272px] m-2.5 flex-shrink-0'>
                     {isToogleList ? <AddList handleCancel={() => setIsToogleList(false)} getTodosAPI={() => getTodosAPI()} /> :
                         <div className='add-list-button bg-slate-700 opacity-50 rounded-[5px] cursor-pointer text-white items-center min-h-[32px] px-[5px] py-[10px] flex hover:bg-black hover:bg-opacity-20' onClick={() => setIsToogleList(true)} >

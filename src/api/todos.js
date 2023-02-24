@@ -12,3 +12,6 @@ export const getOneTodo = (id) => {
 export const createTodo = (data) => {
     return Axios.post(`${config.api_url}/api/v1/todos`, data);
 }
+export const updateTodo = (id, data) => {
+    return Axios.put(`${config.api_url}/api/v1/todos/${id}`, data);
+}

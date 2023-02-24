@@ -24,6 +24,7 @@ const TextField = ({
                 onChange={onChange}
                 placeholder={placeholder}
                 style={{ width: deleteList ? 220 : 1000 }}
+                onKeyDown={onEnter}
             />
             {deleteList && (
                 <>

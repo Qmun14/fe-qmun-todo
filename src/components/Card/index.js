@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TextField from '../TextField';
 import Title from '../Title';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import './card.css'
-import { getOneTodo } from '../../api/todos';
+import { getOneTodo, updateTodo } from '../../api/todos';
 
-const Card = ({ todos }) => {
+const Card = ({ todos, getTodosAPI }) => {
     const [editList, setEditList] = useState({
         status: false,
         id: "",
         name: "",
     });
+    const [card, setCard] = useState([]);
+
+    useEffect(() => {
+        setCard(todos);
+    }, [todos])
 
     const toogleEditList = async (id, status) => {
         try {
@@ -28,9 +33,38 @@ const Card = ({ todos }) => {
         }
     }
 
+    const onEnter = async (e, id) => {
+        try {
+
+            if (e.keyCode === 13) {
+                const payload = { name: editList.name }
+                const response = await updateTodo(id, payload);
+
+                if (response.data.message === 'updating succeeded') {
+                    setEditList({
+                        ...editList,
+                        status: false,
+                        id: '',
+                        name: '',
+                    });
+                    getTodosAPI();
+                }
+            }
+
+        } catch (err) {
+            console.log(err);
+        }
+
+    }
+
+    const onChange = (e) => {
+        setEditList({ ...editList, [e.target.name]: e.target.value });
+
+    }
+
     return (
         <>
-            {todos.map((todo) => (
+            {card.map((todo) => (
 
                 <div className="list" key={todo.id}>
                     <div className="list-cards">
@@ -39,6 +73,7 @@ const Card = ({ todos }) => {
                                 name="name"
                                 value={editList.name}
                                 className="list-title-textarea"
+                                onChange={onChange}
                                 deleteList={() => null}
                                 handleCancel={() =>
                                     setEditList({
@@ -48,6 +83,7 @@ const Card = ({ todos }) => {
                                         name: ''
                                     })
                                 }
+                                onEnter={(e) => onEnter(e, editList.id)}
                             />
                         ) : (
                             <Title
@@ -58,8 +94,8 @@ const Card = ({ todos }) => {
                                 {todo.name}
                             </Title>
                         )}
-                        {todo.Items.map((item) => (
 
+                        {todo.Items.map((item) => (
                             <div className="card" key={item.id}>
                                 {item.name}
                             </div>
