@@ -12,6 +12,6 @@ export const createItem = (data) => {
 export const updateItem = (id, data) => {
     return Axios.put(`${config.api_url}/api/v1/items/${id}`, data);
 }
-export const deleteTodo = (id) => {
-    return Axios.delete(`${config.api_url}/api/v1/todos/${id}`);
+export const deleteItem = (id) => {
+    return Axios.delete(`${config.api_url}/api/v1/items/${id}`);
 }

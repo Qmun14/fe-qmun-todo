@@ -1,5 +1,6 @@
 import React from 'react';
 import IconClose from '@heroicons/react/24/outline/XMarkIcon';
+import IconDelete from '@heroicons/react/24/outline/TrashIcon';
 
 import './button-group.css';
 
@@ -15,7 +16,7 @@ const ButtonGroup = ({ handleSave, saveLabel, handleDelete, handleCancel }) => {
             </div>
             {handleDelete && (
                 <div className='edit-button-cancel' onClick={handleDelete}>
-                    <ion-icon name='trash-outline'></ion-icon>
+                    <IconDelete className='w-5 h-5 mx-1' />
                 </div>
             )}
             <div className='edit-button-cancel' onClick={handleCancel}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { createItem, getOneItem, updateItem } from "../../api/items";
+import { createItem, deleteItem, getOneItem, updateItem } from "../../api/items";
 import ButtonGroup from "../ButtonGroup";
 import TextField from "../TextField";
 
@@ -58,6 +58,18 @@ const AddCard = ({ getTodosAPI, todoID, itemID, adding, cancel }) => {
         }
     }
 
+    const deleteItemAPI = async (id) => {
+        try {
+            const response = await deleteItem(id);
+            if (response.data.message === 'deleting succeeded') {
+                getTodosAPI();
+                clear();
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <div>
             <div className="card">
@@ -73,6 +85,7 @@ const AddCard = ({ getTodosAPI, todoID, itemID, adding, cancel }) => {
                 handleSave={() => { (adding ? saveItem() : updateItemAPI()) }}
                 saveLabel={adding ? "Add Card" : "Edit Card"}
                 handleCancel={cancel}
+                handleDelete={() => deleteItemAPI(itemID)}
             />
         </div>
     );
