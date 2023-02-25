@@ -14,6 +14,14 @@ const HomePage = () => {
     const getTodosAPI = async () => {
         try {
             const response = await getTodos();
+
+            response.data.data.forEach(res => {
+                res.status = false;
+                res.Items.forEach(item => {
+                    item.isEdit = false;
+                });
+            });
+
             setTodos(response.data.data);
 
         } catch (err) {

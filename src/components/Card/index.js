@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '../TextField';
 import Title from '../Title';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
 import './card.css'
 import { deleteTodo, getOneTodo, updateTodo } from '../../api/todos';
+import AddCard from '../AddCard';
 
 const Card = ({ todos, getTodosAPI }) => {
     const [editList, setEditList] = useState({
@@ -12,6 +13,9 @@ const Card = ({ todos, getTodosAPI }) => {
         name: "",
     });
     const [card, setCard] = useState([]);
+    const [todoID, setTodoID] = useState(null);
+    const [itemID, setItemID] = useState(null)
+    const [hover, setHover] = useState(null);
 
     useEffect(() => {
         setCard(todos);
@@ -75,10 +79,40 @@ const Card = ({ todos, getTodosAPI }) => {
         }
     }
 
+    const toogleAddCard = (id) => {
+        const _temp = [...card]
+
+        _temp.forEach(card => {
+            if (card.id === id) {
+                card.status = !card.status;
+            }
+        });
+
+        setCard(_temp);
+        setTodoID(id);
+    }
+
+    const toogleEditCard = (todoID, itemID) => {
+        const _temp = [...card];
+
+        _temp.forEach((card) => {
+            if (card.id === todoID) {
+                card.Items.forEach((item) => {
+                    if (item.id === itemID) {
+                        item.isEdit = !item.isEdit;
+                    }
+                })
+            }
+        });
+
+        setCard(_temp);
+        setTodoID(todoID);
+        setItemID(itemID);
+    }
+
     return (
         <>
             {card.map((todo) => (
-
                 <div className="list" key={todo.id}>
                     <div className="list-cards">
                         {editList.status && editList.id === todo.id ? (
@@ -87,13 +121,15 @@ const Card = ({ todos, getTodosAPI }) => {
                                 value={editList.name}
                                 className="list-title-textarea"
                                 onChange={onChange}
-                                deleteList={() => deleteTodoAPI(editList.id)}
+                                deleteList={() =>
+                                    deleteTodoAPI(editList.id)
+                                }
                                 handleCancel={() =>
                                     setEditList({
                                         ...editList,
                                         status: false,
-                                        id: '',
-                                        name: ''
+                                        id: "",
+                                        name: "",
                                     })
                                 }
                                 onEnter={(e) => onEnter(e, editList.id)}
@@ -109,15 +145,67 @@ const Card = ({ todos, getTodosAPI }) => {
                         )}
 
                         {todo.Items.map((item) => (
-                            <div className="card" key={item.id}>
-                                {item.name}
-                            </div>
+                            <React.Fragment key={item.id}>
+                                {!item.isEdit ? (
+                                    <div
+                                        className="card"
+                                        key={item.id}
+                                        onMouseEnter={() =>
+                                            setHover(item.id)
+                                        }
+                                        onMouseLeave={() =>
+                                            setHover(null)
+                                        }
+                                    >
+                                        {hover === item.id && (
+                                            <div className="card-icons">
+                                                <div
+                                                    className="card-icon"
+                                                    onClick={() =>
+                                                        toogleEditCard(
+                                                            todo.id,
+                                                            item.id
+                                                        )
+                                                    }
+                                                >
+                                                    <PencilIcon />
+                                                </div>
+                                            </div>
+                                        )}
+                                        {item.name}
+                                    </div>
+                                ) : (
+                                    <AddCard
+                                        getTodosAPI={getTodosAPI}
+                                        todoID={todoID}
+                                        itemID={itemID}
+                                        cancel={() =>
+                                            toogleEditCard(
+                                                todo.id,
+                                                item.id
+                                            )
+                                        }
+                                    />
+                                )}
+                            </React.Fragment>
                         ))}
 
-                        <div className="toggle-add-card">
-                            <PlusIcon className='w-5 h-5' />
-                            Add a Card
-                        </div>
+                        {todo.status ? (
+                            <AddCard
+                                getTodosAPI={getTodosAPI}
+                                todoID={todoID}
+                                adding
+                                cancel={() => toogleAddCard(todo.id)}
+                            />
+                        ) : (
+                            <div
+                                className="toggle-add-card"
+                                onClick={() => toogleAddCard(todo.id)}
+                            >
+                                <PlusIcon className="w-5 h-5" />
+                                Add a Card
+                            </div>
+                        )}
                     </div>
                 </div>
             ))}
