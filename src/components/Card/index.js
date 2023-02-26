@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '../TextField';
 import Title from '../Title';
-import { PencilIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, PlusIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import './card.css'
 import { deleteTodo, getOneTodo, updateTodo } from '../../api/todos';
 import AddCard from '../AddCard';
+import { moveItem } from '../../api/items';
+// import { useDrag } from 'react-dnd/dist/hooks';
+// import { useDrop } from 'react-dnd/dist/hooks/useDrop';
+
 
 const Card = ({ todos, getTodosAPI }) => {
     const [editList, setEditList] = useState({
@@ -16,6 +20,22 @@ const Card = ({ todos, getTodosAPI }) => {
     const [todoID, setTodoID] = useState(null);
     const [itemID, setItemID] = useState(null)
     const [hover, setHover] = useState(null);
+
+    // const [{ isDragging }, drag] = useDrag(() => ({
+    //     type: 'div',
+    //     // item: { itemID: itemID, todoID: todoID },
+    //     collect: (monitor) => ({
+    //         isDragging: !!monitor.isDragging(),
+    //     }),
+    // }));
+
+    // const [{ isOver }, drop] = useDrop(() => ({
+    //     accept: 'div',
+    //     drop: (item) => (null),
+    //     collect: (monitor) => ({
+    //         isOver: !!monitor.isOver(),
+    //     }),
+    // }));
 
     useEffect(() => {
         setCard(todos);
@@ -110,10 +130,24 @@ const Card = ({ todos, getTodosAPI }) => {
         setItemID(itemID);
     }
 
+    const moveItemAPI = async (todoID, itemID) => {
+        try {
+            const payload = {
+                targetTodoId: todoID
+            }
+            const response = await moveItem(itemID, payload);
+            if (response.data.message === 'success') {
+                getTodosAPI();
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <>
-            {card.map((todo) => (
-                <div className="list" key={todo.id}>
+            {card.map((todo, i) => (
+                <div className="list" key={todo.id} >
                     <div className="list-cards">
                         {editList.status && editList.id === todo.id ? (
                             <TextField
@@ -144,8 +178,8 @@ const Card = ({ todos, getTodosAPI }) => {
                             </Title>
                         )}
 
-                        {todo.Items.map((item) => (
-                            <React.Fragment key={item.id}>
+                        {todo.Items.map((item, t) => (
+                            <div key={item.id}>
                                 {!item.isEdit ? (
                                     <div
                                         className="card"
@@ -168,8 +202,29 @@ const Card = ({ todos, getTodosAPI }) => {
                                                         )
                                                     }
                                                 >
-                                                    <PencilIcon />
+                                                    <PencilIcon title='Edit ?' />
                                                 </div>
+                                                {i !== 0 &&
+                                                    (
+                                                        <div className="card-icon"
+                                                            onClick={() => moveItemAPI(
+                                                                card[i - 1].id,
+                                                                item.id
+                                                            )}>
+                                                            <ArrowLeftIcon title='move to left?' className='h-5 w-5' />
+                                                        </div>
+                                                    )
+                                                }
+                                                {i !== card.length - 1 &&
+                                                    (
+                                                        <div className="card-icon"
+                                                            onClick={() => moveItemAPI(
+                                                                card[i + 1].id,
+                                                                item.id
+                                                            )}>
+                                                            <ArrowRightIcon title='move to right?' className='h-5 w-5' />
+                                                        </div>
+                                                    )}
                                             </div>
                                         )}
                                         {item.name}
@@ -187,7 +242,7 @@ const Card = ({ todos, getTodosAPI }) => {
                                         }
                                     />
                                 )}
-                            </React.Fragment>
+                            </div>
                         ))}
 
                         {todo.status ? (

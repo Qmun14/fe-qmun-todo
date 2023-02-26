@@ -16,12 +16,12 @@ const ButtonGroup = ({ handleSave, saveLabel, handleDelete, handleCancel }) => {
             </div>
             {handleDelete && (
                 <div className='edit-button-cancel' onClick={handleDelete}>
-                    <IconDelete className='w-5 h-5 mx-1' />
+                    <IconDelete className='w-5 h-5 mx-1' title='delete' />
                 </div>
             )}
             <div className='edit-button-cancel' onClick={handleCancel}>
                 {/* <ion-icon name='close-outline'></ion-icon> */}
-                <IconClose className='w-5 h-5' />
+                <IconClose className='w-5 h-5' title='close' />
             </div>
 
 
